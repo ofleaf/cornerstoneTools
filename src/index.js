@@ -46,11 +46,13 @@ export { timeSeriesScroll,
 
 export { default as wwwcSynchronizer } from './synchronization/wwwcSynchronizer.js';
 export { default as updateImageSynchronizer } from './synchronization/updateImageSynchronizer.js';
+export { default as ImageSynchronizer } from './synchronization/ImageSynchronizer.js';
 export { default as Synchronizer } from './synchronization/Synchronizer.js';
 export { default as stackScrollSynchronizer } from './synchronization/stackScrollSynchronizer.js';
 export { default as stackImagePositionSynchronizer } from './synchronization/stackImagePositionSynchronizer.js';
 export { default as stackImagePositionOffsetSynchronizer } from './synchronization/stackImagePositionOffsetSynchronizer.js';
 export { default as stackImageIndexSynchronizer } from './synchronization/stackImageIndexSynchronizer.js';
+export { default as stackSeriesImage } from './synchronization/stackSeriesImage.js';
 export { default as panZoomSynchronizer } from './synchronization/panZoomSynchronizer.js';
 
 export { default as toolStyle } from './stateManagement/toolStyle.js';
