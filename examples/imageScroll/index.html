@@ -10,34 +10,43 @@
   </head>
   <body>
     <div class="container">
-      <input type="file" id="files" multiple />
+      <div style="display: flex;">
+        <input type="file" id="firstFiles" multiple />
+        <input type="file" id="secondFiles" multiple />
+      </div>
       <div id="image-viewer" class="image-viewer">
-        <div class="image-canvas" ondblclick="showUpLayout(event);">
-          <div id="mrbottomright" style="position: absolute; bottom: 6px; right: 3px;"></div>
+        <div class="series-canvas" ondblclick="showUpLayout(event);">
+          <div class="image-canvas">
+            <div id="mrbottomright" style="position: absolute; bottom: 6px; right: 3px;"></div>
+          </div>
+          <div class="image-canvas">
+            <div id="mrbottomright" style="position: absolute; bottom: 6px; right: 3px;"></div>
+          </div>
+          <div class="image-canvas">
+            <div id="mrbottomright" style="position: absolute; bottom: 6px; right: 3px;"></div>
+          </div>
+          <div class="image-canvas">
+            <div id="mrbottomright" style="position: absolute; bottom: 6px; right: 3px;"></div>
+          </div>
         </div>
-        <div class="image-canvas" ondblclick="showUpLayout(event);">
-          <div id="mrbottomright" style="position: absolute; bottom: 6px; right: 3px;"></div>
-        </div>
-        <div class="image-canvas" ondblclick="showUpLayout(event);">
-          <div id="mrbottomright" style="position: absolute; bottom: 6px; right: 3px;"></div>
-        </div>
-        <div class="image-canvas" ondblclick="showUpLayout(event);">
-          <div id="mrbottomright" style="position: absolute; bottom: 6px; right: 3px;"></div>
+        <div class="series-canvas" id="second-image" ondblclick="showUpLayout(event);">
+          <div class="image-canvas" style="width: 100%; height: 100%;">
+            <div id="mrbottomright" style="position: absolute; bottom: 6px; right: 3px;"></div>
+          </div>
         </div>
       </div>
     </div>
     <script src="https://unpkg.com/cornerstone-core/dist/cornerstone.min.js"></script>
     <script src="https://unpkg.com/cornerstone-math/dist/cornerstoneMath.min.js"></script>
     <script src="./dist/cornerstoneTools.js"></script>
-    <script src="./dist/dicomParser.min.js"></script>
+    <script src="https://unpkg.com/dicom-parser/dist/dicomParser.min.js"></script>
     <script src="./dist/cornerstoneWADOImageLoader.js"></script>
     <script>window.cornerstoneTools || document.write('<script src="https://unpkg.com/cornerstone-tools">\x3C/script>')</script>
   </body>
   <script>
   // Test
   cornerstoneWADOImageLoader.external.cornerstone = cornerstone;
-
-  var config = {
+  const config = {
     webWorkerPath : './dist/cornerstoneWADOImageLoaderWebWorker.js',
     taskConfiguration: {
       'decodeTask' : {
@@ -47,18 +56,7 @@
   };
   cornerstoneWADOImageLoader.webWorkerManager.initialize(config);
   
-  const layout = 4;
-  let stacks = []
-
-  /*
-     for (let i = 0; i < layout; i++) {
-     const imageCanvas = document.createElement('div');
-     imageCanvas.classList.add('image-canvas');
-     imageCanvas.setAttribute('ondblclick', 'showUpLayout()');
-     document.getElementById('image-viewer').appendChild(imageCanvas);
-     }
-   */
-
+  let stacks = [];
 
   const elements = document.getElementsByClassName('image-canvas');
   for (let i = 0; i < elements.length; i++) {
@@ -73,8 +71,10 @@
     cornerstone.enable(elements[i]);
   }
 
-  const inputFiles = document.getElementById('files');
-  inputFiles.addEventListener('change', function (e) {
+  console.log(stacks);
+
+  const firstFiles = document.getElementById('firstFiles');
+  firstFiles.addEventListener('change', function (e) {
     const files = e.target.files;
     let imageIds = [];
 
@@ -85,35 +85,28 @@
     loadAndViewImage(imageIds);
   });
 
-  // let sync = new cornerstoneTools.Synchronizer('cornerstonenewimage', cornerstoneTools.stackImageIndexSynchronizer);
-  /*
-     let sync = new cornerstoneTools.Synchronizer('cornerstonenewimage', (e) => {
-     console.log(e)
-     })
-   */
-  // let sync = new cornerstoneTools.Synchronizer('cornerstonenewimage', cornerstoneTools.stackImagePositionOffsetSynchronizer);
   let sync = new cornerstoneTools.ImageSynchronizer('cornerstonenewimage', cornerstoneTools.stackSeriesImage);
   
   function loadAndViewImage (imageIds) {
     for (let s = 0; s < stacks.length; s++) {
-      /*
-      for (let i = 0; i < imageIds.length; i++) {
-        cornerstone.loadImage(imageIds[i]).then(image => {
-          cornerstone.displayImage(stacks[s].element, image);
-        });
-      }
-      */
       cornerstone.loadImage(imageIds[0]).then(image => {
         cornerstone.displayImage(stacks[s].element, image);
       });
       stacks[s].element.addEventListener('cornerstonenewimage', onNewImage)
       cornerstoneTools.mouseInput.enable(stacks[s].element)
       cornerstoneTools.mouseWheelInput.enable(stacks[s].element)
+
+
+
+
+
+
+
+
       cornerstoneTools.addStackStateManager(stacks[s].element, ['stack'])
       cornerstoneTools.addToolState(stacks[s].element, 'stack', stacks[s].stack)
       cornerstoneTools.stackScrollWheel.activate(stacks[s].element)
       sync.add(stacks[s].element)
-      // sync.getDistances();
     }
   }
 
